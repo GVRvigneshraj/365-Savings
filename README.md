@@ -54,6 +54,18 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## Additional Resources
+## PWA / install
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Production builds include the Angular service worker. Chrome only shows **Install app** when the site is live over HTTPS with a valid manifest + active service worker (not on `ng serve`, and not on a GitHub Pages 404).
+
+1. Enable Pages once: **Repo → Settings → Pages → Source: Deploy from a branch → `gh-pages` → `/ (root)`**.
+2. Live URL: `https://gvrigneshraj.github.io/365-Savings/`
+3. In Chrome, open that URL → reload once → **⋮ → Cast, save and share → Install page as app** (or the install icon in the address bar).
+
+Local install check:
+
+```bash
+npm run build:pages
+npx serve dist/365-savings/browser -l 4200
+# open http://localhost:4200/ over localhost (secure) and check DevTools → Application → Manifest
+```

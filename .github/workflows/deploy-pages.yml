@@ -44,8 +44,27 @@ jobs:
           test -f dist/365-savings/browser/manifest.webmanifest
           test -f dist/365-savings/browser/ngsw-worker.js
           test -f dist/365-savings/browser/ngsw.json
+          test -f dist/365-savings/browser/icons/icon-192x192.png
           test -f dist/365-savings/browser/icons/icon-512x512.png
+          test -f dist/365-savings/browser/icons/icon-512x512-maskable.png
           test -f dist/365-savings/browser/404.html
+          python3 - <<'PY'
+          import json, pathlib
+          root = pathlib.Path('dist/365-savings/browser')
+          m = json.loads((root / 'manifest.webmanifest').read_text())
+          assert m.get('name') and m.get('short_name'), 'name/short_name missing'
+          assert m.get('start_url'), 'start_url missing'
+          assert m.get('display') in ('standalone', 'fullscreen', 'minimal-ui'), 'display must be standalone'
+          icons = m.get('icons') or []
+          sizes = {i.get('sizes') for i in icons}
+          assert '192x192' in sizes and '512x512' in sizes, f'need 192 and 512 icons, got {sizes}'
+          for i in icons:
+              p = root / i['src']
+              assert p.is_file(), f'missing icon {i["src"]}'
+          html = (root / 'index.html').read_text()
+          assert 'rel="manifest"' in html and 'manifest.webmanifest' in html
+          print('PWA installability checks OK')
+          PY
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4

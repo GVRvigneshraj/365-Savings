@@ -2,7 +2,9 @@
   <header class="page-head">
     <div>
       <h1 class="page-title">Settings</h1>
-      <p class="page-sub">Profile, appearance, payment behaviour and your local data.</p>
+      <p class="page-sub">
+        Profile, appearance, payment behaviour and your local data.
+      </p>
     </div>
   </header>
 
@@ -16,17 +18,33 @@
         </div>
       </header>
 
-      <form class="sec-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <form
+        class="sec-form"
+        [formGroup]="profileForm"
+        (ngSubmit)="saveProfile()"
+      >
         <div class="field">
           <label class="label" for="set-name">Full Name</label>
-          <input id="set-name" class="input" type="text" formControlName="fullName" />
-          @if (profileForm.controls.fullName.touched && profileForm.controls.fullName.invalid) {
-            <p class="error-text">Enter at least 2 characters.</p>
+          <input
+            id="set-name"
+            class="input"
+            type="text"
+            formControlName="fullName"
+          />
+          @if (profileForm.controls.fullName.touched &&
+          profileForm.controls.fullName.invalid) {
+          <p class="error-text">Enter at least 2 characters.</p>
           }
         </div>
         <div class="field">
           <label class="label" for="set-mobile">Mobile Number</label>
-          <input id="set-mobile" class="input" type="text" [value]="auth.mobile()" readonly />
+          <input
+            id="set-mobile"
+            class="input"
+            type="text"
+            [value]="auth.mobile()"
+            readonly
+          />
         </div>
         <button type="submit" class="btn btn-primary">
           <app-icon name="check" [size]="16" />
@@ -46,18 +64,18 @@
 
       <div class="theme-grid">
         @for (theme of themes; track theme.value) {
-          <button
-            type="button"
-            class="theme-option"
-            [class.active]="settings().theme === theme.value"
-            (click)="setTheme(theme.value)"
-          >
-            <app-icon [name]="theme.icon" [size]="20" />
-            <span>{{ theme.label }}</span>
-            @if (settings().theme === theme.value) {
-              <app-icon name="check-circle" [size]="16" />
-            }
-          </button>
+        <button
+          type="button"
+          class="theme-option"
+          [class.active]="settings().theme === theme.value"
+          (click)="setTheme(theme.value)"
+        >
+          <app-icon [name]="theme.icon" [size]="20" />
+          <span>{{ theme.label }}</span>
+          @if (settings().theme === theme.value) {
+          <app-icon name="check-circle" [size]="16" />
+          }
+        </button>
         }
       </div>
     </section>
@@ -73,18 +91,18 @@
 
       <div class="toggle-list">
         @for (item of toggles(); track item.key) {
-          <label class="toggle-row">
-            <span class="toggle-text">
-              <strong>{{ item.label }}</strong>
-              <small>{{ item.hint }}</small>
-            </span>
-            <input
-              type="checkbox"
-              class="switch"
-              [checked]="item.value"
-              (change)="toggle(item.key)"
-            />
-          </label>
+        <label class="toggle-row">
+          <span class="toggle-text">
+            <strong>{{ item.label }}</strong>
+            <small>{{ item.hint }}</small>
+          </span>
+          <input
+            type="checkbox"
+            class="switch"
+            [checked]="item.value"
+            (change)="toggle(item.key)"
+          />
+        </label>
         }
 
         <div class="currency-row">
@@ -115,7 +133,12 @@
 
         <label class="btn btn-ghost import-label">
           <app-icon name="upload" [size]="16" /> Import Data
-          <input type="file" accept="application/json,.json" (change)="onImportFile($event)" hidden />
+          <input
+            type="file"
+            accept="application/json,.json"
+            (change)="onImportFile($event)"
+            hidden
+          />
         </label>
 
         <button type="button" class="btn btn-ghost" (click)="loadSampleData()">
@@ -128,12 +151,12 @@
       </div>
 
       @if (importError(); as error) {
-        <p class="import-error">{{ error }}</p>
+      <p class="import-error">{{ error }}</p>
       }
 
       <p class="data-note">
-        All data lives in your browser's LocalStorage and survives refreshes. Export a backup
-        before clearing browser data.
+        All data lives in your browser's LocalStorage and survives refreshes.
+        Export a backup before clearing browser data.
       </p>
     </section>
 
@@ -148,45 +171,49 @@
 
       <div class="data-actions">
         @if (pwa.updateReady()) {
-          <button type="button" class="btn btn-primary" (click)="pwa.applyUpdate()">
-            <app-icon name="refresh" [size]="16" /> Update now — new version ready
-          </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="pwa.applyUpdate()"
+        >
+          <app-icon name="refresh" [size]="16" /> Update now — new version ready
+        </button>
         } @else {
-          <p class="data-note">
-            You're on the latest version. New builds download automatically in the background —
-            refresh here when an update is ready.
-          </p>
-        }
-
-        @if (pwa.canInstall()) {
-          <button
-            type="button"
-            class="btn btn-soft"
-            [disabled]="pwa.installing()"
-            (click)="pwa.install()"
-          >
-            <app-icon name="download" [size]="16" />
-            {{ pwa.installing() ? 'Installing…' : 'Download & Install App' }}
-          </button>
-          <p class="data-note">
-            Installs as a home-screen app with offline access and its own icon.
-          </p>
+        <p class="data-note">
+          You're on the latest version. New builds download automatically in the
+          background — refresh here when an update is ready.
+        </p>
+        } @if (pwa.canInstall()) {
+        <button
+          type="button"
+          class="btn btn-soft"
+          [disabled]="pwa.installing()"
+          (click)="pwa.install()"
+        >
+          <app-icon name="download" [size]="16" />
+          {{ pwa.installing() ? 'Installing…' : 'Download & Install App' }}
+        </button>
+        <p class="data-note">
+          Installs as a home-screen app with offline access and its own icon.
+        </p>
         } @else if (!pwa.standalone()) {
-          <p class="data-note">
-            To install: open your browser menu → <strong>Share</strong> →
-            <strong>Add to Home screen</strong> (Chrome/Edge) or <strong>Install app</strong>.
-          </p>
+        <p class="data-note">{{ pwa.installHelp() }}</p>
+        <p class="data-note">
+          In DevTools → <strong>Application → Manifest</strong>,
+          “Installability” must be clear (site must be HTTPS, not a 404, with
+          service worker active).
+        </p>
         } @else {
-          <p class="data-note">
-            Already installed as an app on this device.
-          </p>
+        <p class="data-note">Already installed as an app on this device.</p>
         }
       </div>
     </section>
 
     <section class="card settings-card danger">
       <header class="sec-head">
-        <span class="sec-icon danger"><app-icon name="alert" [size]="18" /></span>
+        <span class="sec-icon danger"
+          ><app-icon name="alert" [size]="18"
+        /></span>
         <div>
           <h2>Danger Zone</h2>
           <p>Destructive actions — confirmation required</p>
@@ -194,7 +221,11 @@
       </header>
 
       <div class="data-actions">
-        <button type="button" class="btn btn-warning" (click)="resetCurrentPlan()">
+        <button
+          type="button"
+          class="btn btn-warning"
+          (click)="resetCurrentPlan()"
+        >
           <app-icon name="refresh" [size]="16" /> Reset Current Plan
         </button>
         <button type="button" class="btn btn-danger" (click)="deleteAllData()">
@@ -212,8 +243,9 @@
         </div>
       </header>
       <p class="about-text">
-        Progress is payment-count based: a savings slot is marked paid only when its required
-        amount is fully covered. Calendar dates never mark slots as paid.
+        Progress is payment-count based: a savings slot is marked paid only when
+        its required amount is fully covered. Calendar dates never mark slots as
+        paid.
       </p>
       <div class="about-tags">
         <span class="badge badge-green">PWA Ready</span>
