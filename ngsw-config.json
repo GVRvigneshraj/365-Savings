@@ -11,6 +11,9 @@
           "/index.csr.html",
           "/index.html",
           "/manifest.webmanifest",
+          "/icons/icon-192x192.png",
+          "/icons/icon-512x512.png",
+          "/icons/icon-512x512-maskable.png",
           "/*.css",
           "/*.js"
         ]
@@ -21,7 +24,20 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
+        "files": [
+          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    },
+    {
+      "name": "google-fonts",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "urls": [
+          "https://fonts.googleapis.com/**",
+          "https://fonts.gstatic.com/**"
+        ]
       }
     }
   ]

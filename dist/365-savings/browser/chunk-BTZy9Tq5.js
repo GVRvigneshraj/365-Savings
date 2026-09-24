@@ -1,1 +1,0 @@
-import{jt as cv}from"./chunk-B0q1p3H4.js";import{a as f}from"./chunk-DrrzITzX.js";var i=class r{transform(e){return f(e)}static ɵfac=function(m){return new(m||r)};static ɵpipe=cv({name:`inr`,type:r,pure:!0})};export{i as t};
