@@ -1,0 +1,115 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    <a class="auth-brand" routerLink="/">
+      <span class="auth-mark">365</span>
+      <span>
+        <strong>365 Savings</strong>
+        <small>Small Steps. Big Dreams.</small>
+      </span>
+    </a>
+
+    <div class="auth-head">
+      <h1>Create account</h1>
+      <p>Start your savings journey in under a minute.</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label class="label" for="reg-name">Full Name</label>
+        <div class="input-wrap">
+          <app-icon name="user" [size]="17" />
+          <input
+            id="reg-name"
+            class="input"
+            type="text"
+            placeholder="Your full name"
+            formControlName="fullName"
+            autocomplete="name"
+          />
+        </div>
+        @if (fieldError('fullName'); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="reg-mobile">Mobile Number</label>
+        <div class="input-wrap">
+          <app-icon name="phone" [size]="17" />
+          <input
+            id="reg-mobile"
+            class="input"
+            type="tel"
+            inputmode="numeric"
+            maxlength="10"
+            placeholder="9876543210"
+            formControlName="mobile"
+            autocomplete="tel"
+          />
+        </div>
+        @if (fieldError('mobile'); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="reg-password">Password</label>
+        <div class="input-wrap">
+          <app-icon name="lock" [size]="17" />
+          <input
+            id="reg-password"
+            class="input"
+            [type]="showPassword() ? 'text' : 'password'"
+            placeholder="Minimum 6 characters"
+            formControlName="password"
+            autocomplete="new-password"
+          />
+          <button type="button" class="input-action" (click)="togglePassword()" tabindex="-1">
+            <app-icon name="eye" [size]="17" />
+          </button>
+        </div>
+        @if (fieldError('password'); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="reg-confirm">Confirm Password</label>
+        <div class="input-wrap">
+          <app-icon name="lock" [size]="17" />
+          <input
+            id="reg-confirm"
+            class="input"
+            [type]="showPassword() ? 'text' : 'password'"
+            placeholder="Re-enter password"
+            formControlName="confirmPassword"
+            autocomplete="new-password"
+          />
+        </div>
+        @if (fieldError('confirmPassword'); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+        @if (mismatchError(); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+      </div>
+
+      @if (serverError(); as error) {
+        <p class="server-error">
+          <app-icon name="alert" [size]="15" />
+          {{ error }}
+        </p>
+      }
+
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Register</button>
+
+      <div class="auth-links">
+        <a routerLink="/login" class="link-btn strong">Already have an account? Login</a>
+      </div>
+    </form>
+
+    <p class="auth-foot">
+      Your data is stored only on this device.
+    </p>
+  </div>
+</div>

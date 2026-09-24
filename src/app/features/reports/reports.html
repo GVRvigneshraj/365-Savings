@@ -1,0 +1,58 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Reports</h1>
+      <p class="page-sub">Complete overview of your savings activity and progress.</p>
+    </div>
+  </header>
+
+  @if (!reports().hasData) {
+    <div class="card">
+      <app-empty-state
+        icon="chart"
+        title="No report data yet"
+        message="Create a plan and make your first payment to unlock reports and charts."
+      />
+    </div>
+  } @else {
+    <div class="report-summary">
+      @for (card of summaryCards(); track card.label) {
+        <article class="card metric-card">
+          <span class="metric-icon" [class]="'tone-' + card.tone">
+            <app-icon [name]="card.icon" [size]="17" />
+          </span>
+          <div class="metric-body">
+            <span class="metric-label">{{ card.label }}</span>
+            <strong class="metric-value">{{ formatCardValue(card) }}</strong>
+          </div>
+        </article>
+      }
+    </div>
+
+    <div class="chart-grid">
+      <app-chart-card
+        title="Payment Trend"
+        subtitle="Amount of each recent payment"
+        type="line"
+        [data]="reports().paymentTrend"
+        [displayValue]="paymentTrendTotal()"
+      />
+
+      <app-chart-card
+        title="Savings Progress"
+        subtitle="Cumulative saved amount over your payments"
+        type="line"
+        [data]="reports().savingsProgress"
+        [displayValue]="'₹' + reports().totalSaved.toLocaleString('en-IN')"
+      />
+
+      <app-chart-card
+        title="Plan Comparison"
+        subtitle="Saved vs target for each plan"
+        type="hbar"
+        [bars]="comparisonBars()"
+        [displayValue]="reports().activePlans + ' active'"
+      />
+    </div>
+  }
+</section>

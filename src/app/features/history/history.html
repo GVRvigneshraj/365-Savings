@@ -1,0 +1,95 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Payment History</h1>
+      <p class="page-sub">Every payment with its full slot allocation breakdown.</p>
+    </div>
+    <button type="button" class="btn btn-soft" (click)="toggleFilters()">
+      <app-icon name="filter" [size]="16" /> Filters
+      @if (hasActiveFilters()) {
+        <span class="filter-dot"></span>
+      }
+    </button>
+  </header>
+
+  <section class="card filters-card" [class.open]="filtersOpen()">
+    <div class="filter-row">
+      <div class="search-box">
+        <app-icon name="search" [size]="17" />
+        <input
+          type="search"
+          class="search-input"
+          placeholder="Search by plan or amount…"
+          [value]="search()"
+          (input)="onSearch($event)"
+        />
+      </div>
+
+      <select class="input select" [value]="planFilter()" (change)="onPlanChange($event)">
+        <option value="all">All plans</option>
+        @for (plan of plans(); track plan.id) {
+          <option [value]="plan.id">{{ plan.name }}</option>
+        }
+      </select>
+
+      <select class="input select" [value]="statusFilter()" (change)="onStatusChange($event)">
+        <option value="all">All statuses</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="PARTIAL">Partial</option>
+      </select>
+
+      <label class="date-field">
+        <span>From</span>
+        <input class="input" type="date" [value]="dateFrom()" (change)="onFromChange($event)" />
+      </label>
+
+      <label class="date-field">
+        <span>To</span>
+        <input class="input" type="date" [value]="dateTo()" (change)="onToChange($event)" />
+      </label>
+
+      @if (hasActiveFilters()) {
+        <button type="button" class="btn btn-ghost btn-sm" (click)="clearFilters()">
+          <app-icon name="x" [size]="15" /> Clear
+        </button>
+      }
+    </div>
+
+    <div class="filter-summary">
+      <span>{{ filteredPayments().length }} payment(s)</span>
+      <strong>Total {{ totalFiltered() | inr }}</strong>
+    </div>
+  </section>
+
+  @if (store.payments().length === 0) {
+    <div class="card">
+      <app-empty-state
+        icon="clock"
+        title="No payments yet"
+        message="Once you make a payment, it will appear here with a full allocation breakdown."
+        actionLabel="Make a Payment"
+        (action)="goPay()"
+      />
+      <div class="cta-row">
+        <a class="btn btn-primary" routerLink="/pay">Go to Pay</a>
+      </div>
+    </div>
+  } @else if (filteredPayments().length === 0) {
+    <div class="card">
+      <app-empty-state
+        icon="search"
+        title="No matching payments"
+        message="Try changing your search or filter criteria."
+      />
+      <div class="cta-row">
+        <button type="button" class="btn btn-soft" (click)="clearFilters()">Clear filters</button>
+      </div>
+    </div>
+  } @else {
+    <div class="history-list">
+      @for (payment of filteredPayments(); track payment.id) {
+        <app-payment-history-card [payment]="payment" />
+      }
+    </div>
+  }
+</section>

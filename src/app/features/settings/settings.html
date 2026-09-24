@@ -1,0 +1,225 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Settings</h1>
+      <p class="page-sub">Profile, appearance, payment behaviour and your local data.</p>
+    </div>
+  </header>
+
+  <div class="settings-layout">
+    <section class="card settings-card">
+      <header class="sec-head">
+        <span class="sec-icon"><app-icon name="user" [size]="18" /></span>
+        <div>
+          <h2>Profile</h2>
+          <p>Member since {{ memberSince() }}</p>
+        </div>
+      </header>
+
+      <form class="sec-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="field">
+          <label class="label" for="set-name">Full Name</label>
+          <input id="set-name" class="input" type="text" formControlName="fullName" />
+          @if (profileForm.controls.fullName.touched && profileForm.controls.fullName.invalid) {
+            <p class="error-text">Enter at least 2 characters.</p>
+          }
+        </div>
+        <div class="field">
+          <label class="label" for="set-mobile">Mobile Number</label>
+          <input id="set-mobile" class="input" type="text" [value]="auth.mobile()" readonly />
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <app-icon name="check" [size]="16" />
+          {{ profileSaved() ? 'Saved ✓' : 'Save Profile' }}
+        </button>
+      </form>
+    </section>
+
+    <section class="card settings-card">
+      <header class="sec-head">
+        <span class="sec-icon"><app-icon name="sun" [size]="18" /></span>
+        <div>
+          <h2>Theme</h2>
+          <p>Choose how 365 Savings looks</p>
+        </div>
+      </header>
+
+      <div class="theme-grid">
+        @for (theme of themes; track theme.value) {
+          <button
+            type="button"
+            class="theme-option"
+            [class.active]="settings().theme === theme.value"
+            (click)="setTheme(theme.value)"
+          >
+            <app-icon [name]="theme.icon" [size]="20" />
+            <span>{{ theme.label }}</span>
+            @if (settings().theme === theme.value) {
+              <app-icon name="check-circle" [size]="16" />
+            }
+          </button>
+        }
+      </div>
+    </section>
+
+    <section class="card settings-card">
+      <header class="sec-head">
+        <span class="sec-icon"><app-icon name="settings" [size]="18" /></span>
+        <div>
+          <h2>Preferences</h2>
+          <p>Payment behaviour across all plans</p>
+        </div>
+      </header>
+
+      <div class="toggle-list">
+        @for (item of toggles(); track item.key) {
+          <label class="toggle-row">
+            <span class="toggle-text">
+              <strong>{{ item.label }}</strong>
+              <small>{{ item.hint }}</small>
+            </span>
+            <input
+              type="checkbox"
+              class="switch"
+              [checked]="item.value"
+              (change)="toggle(item.key)"
+            />
+          </label>
+        }
+
+        <div class="currency-row">
+          <span class="toggle-text">
+            <strong>Currency</strong>
+            <small>All amounts are shown in Indian Rupees.</small>
+          </span>
+          <select class="input select currency-select" disabled>
+            <option>INR ₹</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="card settings-card">
+      <header class="sec-head">
+        <span class="sec-icon"><app-icon name="download" [size]="18" /></span>
+        <div>
+          <h2>Data & Backup</h2>
+          <p>{{ dataCounts() }}</p>
+        </div>
+      </header>
+
+      <div class="data-actions">
+        <button type="button" class="btn btn-soft" (click)="exportData()">
+          <app-icon name="download" [size]="16" /> Export Data
+        </button>
+
+        <label class="btn btn-ghost import-label">
+          <app-icon name="upload" [size]="16" /> Import Data
+          <input type="file" accept="application/json,.json" (change)="onImportFile($event)" hidden />
+        </label>
+
+        <button type="button" class="btn btn-ghost" (click)="loadSampleData()">
+          <app-icon name="plus-circle" [size]="16" /> Load Sample Plans
+        </button>
+
+        <a class="btn btn-ghost" routerLink="/plans">
+          <app-icon name="list" [size]="16" /> Manage Plans
+        </a>
+      </div>
+
+      @if (importError(); as error) {
+        <p class="import-error">{{ error }}</p>
+      }
+
+      <p class="data-note">
+        All data lives in your browser's LocalStorage and survives refreshes. Export a backup
+        before clearing browser data.
+      </p>
+    </section>
+
+    <section class="card settings-card">
+      <header class="sec-head">
+        <span class="sec-icon"><app-icon name="refresh" [size]="18" /></span>
+        <div>
+          <h2>App Update</h2>
+          <p>{{ pwa.statusText() }}</p>
+        </div>
+      </header>
+
+      <div class="data-actions">
+        @if (pwa.updateReady()) {
+          <button type="button" class="btn btn-primary" (click)="pwa.applyUpdate()">
+            <app-icon name="refresh" [size]="16" /> Update now — new version ready
+          </button>
+        } @else {
+          <p class="data-note">
+            You're on the latest version. New builds download automatically in the background —
+            refresh here when an update is ready.
+          </p>
+        }
+
+        @if (pwa.canInstall()) {
+          <button
+            type="button"
+            class="btn btn-soft"
+            [disabled]="pwa.installing()"
+            (click)="pwa.install()"
+          >
+            <app-icon name="download" [size]="16" />
+            {{ pwa.installing() ? 'Installing…' : 'Download & Install App' }}
+          </button>
+          <p class="data-note">
+            Installs as a home-screen app with offline access and its own icon.
+          </p>
+        } @else if (!pwa.standalone()) {
+          <p class="data-note">
+            To install: open your browser menu → <strong>Share</strong> →
+            <strong>Add to Home screen</strong> (Chrome/Edge) or <strong>Install app</strong>.
+          </p>
+        } @else {
+          <p class="data-note">
+            Already installed as an app on this device.
+          </p>
+        }
+      </div>
+    </section>
+
+    <section class="card settings-card danger">
+      <header class="sec-head">
+        <span class="sec-icon danger"><app-icon name="alert" [size]="18" /></span>
+        <div>
+          <h2>Danger Zone</h2>
+          <p>Destructive actions — confirmation required</p>
+        </div>
+      </header>
+
+      <div class="data-actions">
+        <button type="button" class="btn btn-warning" (click)="resetCurrentPlan()">
+          <app-icon name="refresh" [size]="16" /> Reset Current Plan
+        </button>
+        <button type="button" class="btn btn-danger" (click)="deleteAllData()">
+          <app-icon name="trash" [size]="16" /> Delete All Local Data
+        </button>
+      </div>
+    </section>
+
+    <section class="card settings-card about">
+      <header class="sec-head">
+        <span class="sec-icon"><app-icon name="bookmark" [size]="18" /></span>
+        <div>
+          <h2>365 Savings</h2>
+          <p>Small Steps. Big Dreams.</p>
+        </div>
+      </header>
+      <p class="about-text">
+        Progress is payment-count based: a savings slot is marked paid only when its required
+        amount is fully covered. Calendar dates never mark slots as paid.
+      </p>
+      <div class="about-tags">
+        <span class="badge badge-green">PWA Ready</span>
+        <span class="badge badge-blue">Offline Data</span>
+        <span class="badge badge-yellow">INR ₹</span>
+      </div>
+    </section>
+  </div>
+</section>

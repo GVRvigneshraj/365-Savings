@@ -1,0 +1,161 @@
+<div class="shell">
+  <aside class="sidebar" aria-label="Primary navigation">
+    <a class="brand" routerLink="/dashboard">
+      <span class="brand-mark">365</span>
+      <span class="brand-text">
+        <strong>365 Savings</strong>
+        <small>Small Steps. Big Dreams.</small>
+      </span>
+    </a>
+
+    <nav class="side-nav">
+      @for (item of desktopNav; track item.path) {
+        @if (item.icon === 'grid') {
+          <button type="button" class="nav-link" (click)="openGrid()">
+            <app-icon [name]="item.icon" [size]="19" />
+            <span>{{ item.label }}</span>
+          </button>
+        } @else {
+          <a
+            class="nav-link"
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: !!item.exact }"
+          >
+            <app-icon [name]="item.icon" [size]="19" />
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      }
+    </nav>
+
+    @if (pwa.updateReady()) {
+      <div class="side-update" role="status">
+        <strong>New version ready</strong>
+        <button type="button" class="btn btn-primary btn-sm" (click)="pwa.applyUpdate()">
+          <app-icon name="refresh" [size]="14" /> Update
+        </button>
+      </div>
+    } @else if (pwa.canInstall() && !pwa.standalone()) {
+      <div class="side-update" role="status">
+        <strong>Install app</strong>
+        <button
+          type="button"
+          class="btn btn-soft btn-sm"
+          [disabled]="pwa.installing()"
+          (click)="pwa.install()"
+        >
+          <app-icon name="download" [size]="14" />
+          {{ pwa.installing() ? '…' : 'Download' }}
+        </button>
+      </div>
+    }
+
+    <div class="side-streak card">
+      <span class="streak-icon"><app-icon name="flame" [size]="18" /></span>
+      <div>
+        <strong>{{ streak() }} day streak</strong>
+        <small>Keep the savings habit alive</small>
+      </div>
+    </div>
+
+    <div class="side-user">
+      <span class="avatar">{{ initials() }}</span>
+      <div class="side-user-info">
+        <strong>{{ auth.displayName() }}</strong>
+        <small>{{ auth.mobile() }}</small>
+      </div>
+      <button type="button" class="icon-btn" title="Sign out" (click)="logout()">
+        <app-icon name="logout" [size]="17" />
+      </button>
+    </div>
+  </aside>
+
+  <div class="shell-main">
+    <header class="mobile-header">
+      <a class="brand brand-mobile" routerLink="/dashboard">
+        <span class="brand-mark">365</span>
+        <span class="brand-text">
+          <strong>365 Savings</strong>
+          <small>{{ pageTitle() }}</small>
+        </span>
+      </a>
+      <div class="mobile-header-actions">
+        <span class="streak-pill" title="Current streak">
+          <app-icon name="flame" [size]="14" /> {{ streak() }}
+        </span>
+        <span class="avatar">{{ initials() }}</span>
+      </div>
+    </header>
+
+    @if (pwa.updateReady()) {
+      <div class="update-banner" role="status">
+        <app-icon name="refresh" [size]="15" />
+        <span>New version available</span>
+        <button type="button" class="update-cta" (click)="pwa.applyUpdate()">Update</button>
+      </div>
+    } @else if (pwa.canInstall() && !pwa.standalone()) {
+      <div class="update-banner install-banner" role="status">
+        <app-icon name="download" [size]="15" />
+        <span>Install 365 Savings</span>
+        <button
+          type="button"
+          class="update-cta"
+          [disabled]="pwa.installing()"
+          (click)="pwa.install()"
+        >
+          {{ pwa.installing() ? '…' : 'Download' }}
+        </button>
+      </div>
+    }
+
+    <main class="shell-content">
+      <router-outlet />
+    </main>
+
+    <nav class="bottom-nav" aria-label="Mobile navigation">
+      @for (item of bottomNav; track item.path) {
+        <a
+          class="bottom-link"
+          [class.bottom-pay]="item.path === '/pay'"
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: !!item.exact }"
+        >
+          <app-icon [name]="item.icon" [size]="20" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+      <button type="button" class="bottom-link" (click)="toggleMore()">
+        <app-icon name="more" [size]="20" />
+        <span>More</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+@if (moreOpen()) {
+  <div class="sheet-backdrop" (click)="closeMore()">
+    <div class="sheet" role="dialog" aria-label="More options" (click)="$event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-user">
+        <span class="avatar lg">{{ initials() }}</span>
+        <div>
+          <strong>{{ auth.displayName() }}</strong>
+          <small>{{ auth.mobile() }}</small>
+        </div>
+      </div>
+      @for (item of moreItems(); track item.path) {
+        <a class="sheet-link" [routerLink]="item.path" (click)="closeMore()">
+          <app-icon [name]="item.icon" [size]="19" />
+          <span>{{ item.label }}</span>
+          <app-icon name="chevron-right" [size]="16" />
+        </a>
+      }
+      <button type="button" class="sheet-link danger" (click)="logout()">
+        <app-icon name="logout" [size]="19" />
+        <span>Sign out</span>
+      </button>
+    </div>
+  </div>
+}

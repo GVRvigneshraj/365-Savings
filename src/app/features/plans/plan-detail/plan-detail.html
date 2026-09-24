@@ -1,0 +1,217 @@
+<section class="page">
+  @if (!plan()) {
+    <div class="card">
+      <app-empty-state
+        icon="alert"
+        title="Plan not found"
+        message="This plan may have been deleted from this device."
+        actionLabel="Back to Plans"
+        (action)="goGrid()"
+      />
+      <div class="not-found-cta">
+        <a class="btn btn-primary" routerLink="/plans">My Plans</a>
+      </div>
+    </div>
+  } @else {
+    <header class="page-head detail-head">
+      <div>
+        <a class="back-link" routerLink="/plans">
+          <app-icon name="arrow-left" [size]="16" /> My Plans
+        </a>
+        <div class="title-row">
+          <h1 class="page-title">{{ plan()!.name }}</h1>
+          <span
+            class="badge"
+            [class]="
+              plan()!.status === 'COMPLETED'
+                ? 'badge badge-green'
+                : plan()!.status === 'PAUSED'
+                  ? 'badge badge-yellow'
+                  : 'badge badge-blue'
+            "
+          >
+            {{ plan()!.status }}
+          </span>
+        </div>
+        <p class="page-sub">
+          {{ typeLabel() }} · {{ plan()!.totalSlots }} slots ·
+          @if (plan()!.amountMode === 'increasing') {
+            Increasing amounts
+          } @else {
+            Fixed amounts
+          }
+        </p>
+      </div>
+
+      <div class="detail-actions">
+        <button type="button" class="btn btn-soft" (click)="goGrid()">
+          <app-icon name="grid" [size]="16" /> Grid
+        </button>
+        @if (plan()!.status !== 'COMPLETED') {
+          <button type="button" class="btn btn-ghost" (click)="togglePause()">
+            <app-icon [name]="plan()!.status === 'PAUSED' ? 'play' : 'pause'" [size]="16" />
+            {{ plan()!.status === 'PAUSED' ? 'Resume' : 'Pause' }}
+          </button>
+          <button type="button" class="btn btn-primary" (click)="goPay()">
+            <app-icon name="rupee" [size]="16" /> Pay
+          </button>
+        }
+      </div>
+    </header>
+
+    @if (stats().isComplete) {
+      <section class="celebrate">
+        <div class="celebrate-icon"><app-icon name="gift" [size]="30" /></div>
+        <div class="celebrate-text">
+          <p class="celebrate-kicker">🎉 Plan Completed</p>
+          <h2>{{ plan()!.totalSlots }} / {{ plan()!.totalSlots }} slots paid</h2>
+          <p>
+            {{ plan()!.totalTarget | inr }} saved · every slot is fully paid. Congratulations!
+          </p>
+        </div>
+      </section>
+    }
+
+    <div class="summary-grid">
+      <app-summary-card
+        label="Paid Count"
+        [value]="stats().paidCount + ' / ' + plan()!.totalSlots"
+        sub="Fully paid slots"
+        icon="target"
+        tone="green"
+      />
+      <app-summary-card
+        label="Total Saved"
+        [value]="stats().totalPaid | inr"
+        [sub]="'of ' + (plan()!.totalTarget | inr) + ' target'"
+        icon="rupee"
+        tone="blue"
+      />
+      <app-summary-card
+        label="Remaining"
+        [value]="stats().remainingAmount | inr"
+        sub="Left to reach target"
+        icon="pie"
+        tone="gold"
+      />
+      <app-summary-card
+        label="Partial / Unpaid"
+        [value]="stats().partialCount + ' / ' + stats().unpaidCount"
+        sub="Partial slots / unpaid slots"
+        icon="clock"
+        tone="navy"
+      />
+    </div>
+
+    <div class="detail-grid">
+      <section class="card panel">
+        <header class="panel-head">
+          <div>
+            <h2 class="panel-title">Savings Progress</h2>
+            <p class="panel-sub">Progress changes only when you pay</p>
+          </div>
+        </header>
+
+        <div class="rings">
+          <div class="ring-item">
+            <app-progress-ring
+              [percent]="stats().slotProgress"
+              [size]="130"
+              [display]="slotPercent()"
+              [sub]="'Paid ' + stats().paidCount + '/' + plan()!.totalSlots"
+            />
+            <span class="ring-caption">Slot progress</span>
+          </div>
+          <div class="ring-item">
+            <app-progress-ring
+              [percent]="stats().amountProgress"
+              [size]="130"
+              color="var(--blue)"
+              track="var(--blue-soft)"
+              [display]="amountPercent()"
+              [sub]="(stats().totalPaid | inr) + ' saved'"
+            />
+            <span class="ring-caption">Amount progress</span>
+          </div>
+        </div>
+
+        <div class="next-box">
+          @if (stats().nextSlot; as next) {
+            <div class="next-info">
+              <span class="next-label">Next slot</span>
+              <strong>{{ next.label }}</strong>
+              <span class="next-req">
+                Requires {{ next.requiredAmount | inr }}
+                @if (stats().partialBalance > 0) {
+                  · already paid {{ stats().partialBalance | inr }}
+                }
+              </span>
+            </div>
+            @if (plan()!.status !== 'COMPLETED') {
+              <button type="button" class="btn btn-primary" (click)="goPay()">
+                Pay now
+              </button>
+            }
+          } @else {
+            <div class="next-info">
+              <span class="next-label">All slots fully paid</span>
+              <strong>Target achieved 🎉</strong>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="card panel">
+        <header class="panel-head">
+          <div>
+            <h2 class="panel-title">Recent Payments</h2>
+            <p class="panel-sub">Latest activity on this plan</p>
+          </div>
+          <a class="link-more" routerLink="/history">History</a>
+        </header>
+
+        @if (payments().length === 0) {
+          <app-empty-state
+            icon="clock"
+            title="No payments yet"
+            message="Make your first payment to start filling your savings slots."
+            actionLabel="Pay now"
+            (action)="goPay()"
+          />
+        } @else {
+          <div class="pay-list">
+            @for (payment of payments(); track payment.id) {
+              <app-payment-history-card [payment]="payment" />
+            }
+          </div>
+        }
+      </section>
+    </div>
+
+    <section class="card panel grid-panel">
+      <header class="panel-head">
+        <div>
+          <h2 class="panel-title">Savings Slots</h2>
+          <p class="panel-sub">Green = paid · Yellow = partial · Gray = unpaid</p>
+        </div>
+        <a class="link-more" [routerLink]="['/grid', plan()!.id]">Open full grid</a>
+      </header>
+      <app-savings-grid [planId]="plan()!.id" />
+    </section>
+
+    <section class="card danger-zone">
+      <div>
+        <strong>Plan controls</strong>
+        <p>Reset clears all payments for this plan. Delete removes it permanently.</p>
+      </div>
+      <div class="danger-actions">
+        <button type="button" class="btn btn-ghost" (click)="resetPlan()">
+          <app-icon name="refresh" [size]="16" /> Reset Plan
+        </button>
+        <button type="button" class="btn btn-danger" (click)="deletePlan()">
+          <app-icon name="trash" [size]="16" /> Delete Plan
+        </button>
+      </div>
+    </section>
+  }
+</section>

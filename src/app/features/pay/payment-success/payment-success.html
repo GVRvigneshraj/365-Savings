@@ -1,0 +1,94 @@
+<section class="page success-page">
+  @if (result(); as data) {
+    @if (data.planCompleted) {
+      <section class="success-hero celebrate-hero">
+        <div class="big-icon gold"><app-icon name="gift" [size]="34" /></div>
+        <p class="kicker">🎉 Plan Completed</p>
+        <h1>{{ data.planName }}</h1>
+        <p class="celebrate-sub">
+          {{ data.totalSlots }} / {{ data.totalSlots }} slots ·
+          {{ data.totalSavedAfter | inr }} saved
+        </p>
+        <div class="confetti" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </section>
+    } @else {
+      <section class="success-hero">
+        <div class="big-icon"><app-icon name="check-circle" [size]="34" /></div>
+        <p class="kicker">Payment Successful</p>
+        <p class="amount">{{ data.payment.amount | inr }}</p>
+        <p class="plan-name">{{ data.planName }}</p>
+      </section>
+    }
+
+    <section class="card result-card">
+      <div class="count-compare">
+        <div class="count-box">
+          <span class="count-label">Previous Paid Count</span>
+          <strong class="count-value">{{ data.previousPaidCount }} / {{ data.totalSlots }}</strong>
+        </div>
+        <span class="count-arrow"><app-icon name="arrow-right" [size]="20" /></span>
+        <div class="count-box highlight">
+          <span class="count-label">New Paid Count</span>
+          <strong class="count-value">{{ data.newPaidCount }} / {{ data.totalSlots }}</strong>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progressWidth()"></div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-item">
+          <span class="result-label">Slots Completed</span>
+          <strong class="result-value">{{ data.slotsCompleted }}</strong>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Allocated</span>
+          <strong class="result-value">{{ data.payment.allocatedAmount | inr }}</strong>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Total Saved</span>
+          <strong class="result-value green">{{ data.totalSavedAfter | inr }}</strong>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Remaining</span>
+          <strong class="result-value">{{ data.remainingAfter | inr }}</strong>
+        </div>
+      </div>
+
+      @if (data.payment.extraAmount > 0) {
+        <p class="extra-line">
+          <app-icon name="info" [size]="15" />
+          Extra / unallocated amount recorded: {{ data.payment.extraAmount | inr }}
+        </p>
+      }
+
+      @if (data.slotsCompleted > 0) {
+        <div class="alloc-recap">
+          <p class="recap-title">Allocation applied</p>
+          <div class="recap-chips">
+            @for (alloc of data.payment.allocations; track alloc.slotId) {
+              <span class="recap-chip" [class.full]="alloc.status === 'FULLY_PAID'">
+                Slot #{{ alloc.slotNumber }} · {{ alloc.amountAllocated | inr }}
+              </span>
+            }
+          </div>
+        </div>
+      }
+    </section>
+
+    <div class="success-actions">
+      <button type="button" class="btn btn-ghost btn-lg" (click)="backToDashboard()">
+        <app-icon name="home" [size]="17" /> Back to Dashboard
+      </button>
+      <button type="button" class="btn btn-primary btn-lg" (click)="viewProgress()">
+        <app-icon name="grid" [size]="17" /> View Progress
+      </button>
+    </div>
+
+    <button type="button" class="link-pay" (click)="payAgain()">Make another payment</button>
+  }
+</section>

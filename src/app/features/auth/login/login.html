@@ -1,0 +1,80 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    <a class="auth-brand" routerLink="/">
+      <span class="auth-mark">365</span>
+      <span>
+        <strong>365 Savings</strong>
+        <small>Small Steps. Big Dreams.</small>
+      </span>
+    </a>
+
+    <div class="auth-head">
+      <h1>Welcome back</h1>
+      <p>Sign in to continue your savings journey.</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label class="label" for="login-mobile">Mobile Number</label>
+        <div class="input-wrap">
+          <app-icon name="phone" [size]="17" />
+          <input
+            id="login-mobile"
+            class="input"
+            type="tel"
+            inputmode="numeric"
+            maxlength="10"
+            placeholder="9876543210"
+            formControlName="mobile"
+            autocomplete="tel"
+          />
+        </div>
+        @if (fieldError('mobile'); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="label" for="login-password">Password</label>
+        <div class="input-wrap">
+          <app-icon name="lock" [size]="17" />
+          <input
+            id="login-password"
+            class="input"
+            [type]="showPassword() ? 'text' : 'password'"
+            placeholder="Your password"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+          <button type="button" class="input-action" (click)="togglePassword()" tabindex="-1">
+            <app-icon name="eye" [size]="17" />
+          </button>
+        </div>
+        @if (fieldError('password'); as error) {
+          <p class="error-text">{{ error }}</p>
+        }
+      </div>
+
+      @if (serverError(); as error) {
+        <p class="server-error">
+          <app-icon name="alert" [size]="15" />
+          {{ error }}
+        </p>
+      }
+
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+
+      <div class="auth-links">
+        <button type="button" class="link-btn" (click)="serverError.set('Password reset works offline in this demo — your data stays on this device.')">
+          Forgot Password?
+        </button>
+        <a routerLink="/register" class="link-btn strong">Create Account</a>
+      </div>
+    </form>
+
+    <p class="auth-foot">
+      New here?
+      <a routerLink="/register">Create a free account</a>
+    </p>
+  </div>
+</div>

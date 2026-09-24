@@ -1,0 +1,160 @@
+<section class="page">
+  @if (!plan()) {
+    <div class="card">
+      <app-empty-state
+        icon="grid"
+        title="Plan not found"
+        message="Pick a valid savings plan to view its slot grid."
+        actionLabel="Go to Plans"
+        (action)="goPay()"
+      />
+      <div class="cta-row">
+        <a class="btn btn-primary" routerLink="/plans">My Plans</a>
+      </div>
+    </div>
+  } @else {
+    <header class="page-head grid-head">
+      <div>
+        <a class="back-link" routerLink="/plans">
+          <app-icon name="arrow-left" [size]="16" /> My Plans
+        </a>
+        <h1 class="page-title">Savings Grid</h1>
+        <p class="page-sub">
+          {{ plan()!.name }} · a grid of savings slots (not a calendar). Paid Count is
+          {{ stats().paidCount }} / {{ plan()!.totalSlots }}.
+        </p>
+      </div>
+      @if (plan()!.status !== 'COMPLETED') {
+        <button type="button" class="btn btn-primary" (click)="goPay()">
+          <app-icon name="rupee" [size]="17" /> Pay
+        </button>
+      }
+    </header>
+
+    @if (stats().nextSlot; as next) {
+      <div class="next-banner">
+        <span class="nb-icon"><app-icon name="zap" [size]="17" /></span>
+        <div class="nb-text">
+          <span class="nb-kicker">Next payment</span>
+          <strong class="nb-label">{{ next.label }}</strong>
+        </div>
+        <strong class="nb-amt">{{ (next.requiredAmount - next.paidAmount) | inr }} due</strong>
+        <button type="button" class="btn btn-primary btn-sm" (click)="goPay()">Pay now</button>
+      </div>
+    }
+
+    <div class="summary-grid">
+      <app-summary-card
+        label="Paid Count"
+        [value]="stats().paidCount + ' / ' + plan()!.totalSlots"
+        sub="Fully paid slots"
+        icon="target"
+        tone="green"
+      />
+      <app-summary-card
+        label="Partial Count"
+        [value]="stats().partialCount"
+        sub="Slots with part payment"
+        icon="clock"
+        tone="gold"
+      />
+      <app-summary-card
+        label="Unpaid Count"
+        [value]="stats().unpaidCount"
+        sub="Not started yet"
+        icon="info"
+        tone="blue"
+      />
+      <app-summary-card
+        label="Progress"
+        [value]="progressPercent()"
+        [sub]="(stats().totalPaid | inr) + ' of ' + (plan()!.totalTarget | inr)"
+        icon="chart"
+        tone="navy"
+      />
+    </div>
+
+    <div class="grid-layout">
+      <section class="card grid-panel">
+        <header class="panel-head">
+          <div>
+            <h2 class="panel-title">All Savings Slots</h2>
+            <p class="panel-sub">Tap any slot to inspect its required / paid / remaining amounts.</p>
+          </div>
+          <div class="totals">
+            <span>Saved {{ stats().totalPaid | inr }}</span>
+            <span>Remaining {{ stats().remainingAmount | inr }}</span>
+          </div>
+        </header>
+        <app-savings-grid
+          [planId]="planId()"
+          [selectedId]="selectedSlot()?.id ?? null"
+          (slotSelect)="onSlotSelect($event)"
+        />
+      </section>
+
+      <aside class="card slot-detail" [class]="slotStatusClass()">
+        @if (selectedSlot(); as slot) {
+          <header class="detail-head">
+            <div>
+              <p class="detail-kicker">Savings slot</p>
+              <h2 class="detail-title">{{ slot.label }}</h2>
+            </div>
+            <span class="slot-badge">{{ slotStatusLabel() }}</span>
+          </header>
+
+          <div class="detail-rows">
+            <div class="detail-row">
+              <span>Required</span>
+              <strong>{{ slot.requiredAmount | inr }}</strong>
+            </div>
+            <div class="detail-row">
+              <span>Paid</span>
+              <strong class="green">{{ slot.paidAmount | inr }}</strong>
+            </div>
+            <div class="detail-row">
+              <span>Remaining</span>
+              <strong [class.warn]="slot.requiredAmount - slot.paidAmount > 0">
+                {{ slot.requiredAmount - slot.paidAmount | inr }}
+              </strong>
+            </div>
+            <div class="detail-row">
+              <span>Status</span>
+              <strong>{{ slot.status }}</strong>
+            </div>
+            @if (slot.paidAt) {
+              <div class="detail-row">
+                <span>Last paid</span>
+                <strong>{{ slot.paidAt | date: 'dd MMM yyyy' }}</strong>
+              </div>
+            }
+          </div>
+
+          @if (slot.status !== 'FULLY_PAID' && plan()!.status !== 'COMPLETED') {
+            <button type="button" class="btn btn-primary btn-block" (click)="goPay()">
+              Pay {{ slot.requiredAmount - slot.paidAmount | inr }} for this slot
+            </button>
+          }
+          <button type="button" class="btn btn-ghost btn-block" (click)="closeDetail()">
+            Close details
+          </button>
+        } @else {
+          <div class="detail-empty">
+            <span class="detail-empty-icon"><app-icon name="grid" [size]="24" /></span>
+            <h3>Select a slot</h3>
+            <p>
+              Tap any number in the grid to see its required amount, paid amount, remaining
+              balance and status.
+            </p>
+            <div class="legend">
+              <span><i class="dot paid"></i> Green = fully paid</span>
+              <span><i class="dot partial"></i> Yellow = partial</span>
+              <span><i class="dot unpaid"></i> Gray = unpaid</span>
+              <span><i class="dot next"></i> Blue ring = next slot</span>
+            </div>
+          </div>
+        }
+      </aside>
+    </div>
+  }
+</section>

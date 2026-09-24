@@ -1,0 +1,251 @@
+<section class="page">
+  <header class="page-head dash-head">
+    <div>
+      <h1 class="page-title">Hello, {{ firstName() }} 👋</h1>
+      <p class="page-sub">{{ greetingLine() }}</p>
+    </div>
+    <div class="head-actions">
+      <button type="button" class="btn btn-primary" routerLink="/pay">
+        <app-icon name="rupee" [size]="17" /> Pay
+      </button>
+    </div>
+  </header>
+
+  @if (!data().hasPlans) {
+    <div class="card empty-hero">
+      <app-empty-state
+        icon="target"
+        title="Start your first savings scheme"
+        message="Pick a ready-made Daily, Weekly or Monthly scheme. Every payment you make is allocated to the next unpaid slot automatically — never based on the calendar date."
+        actionLabel="Browse Schemes"
+        (action)="goSchemes()"
+      />
+    </div>
+  }
+
+  <div class="summary-grid">
+    <app-summary-card
+      label="Total Saved"
+      [value]="totalSavedText()"
+      [sub]="data().focusPlan ? 'Across all plans' : 'Start your first plan'"
+      icon="rupee"
+      tone="green"
+    />
+    <app-summary-card
+      label="Paid Count"
+      [value]="paidCountText()"
+      [sub]="data().focusPlan ? data().focusPlan!.name : 'No active plan'"
+      icon="target"
+      tone="blue"
+    />
+    <app-summary-card
+      label="Remaining"
+      [value]="remainingText()"
+      [sub]="'Amount left to reach your targets'"
+      icon="pie"
+      tone="gold"
+    />
+    <app-summary-card
+      label="Progress"
+      [value]="progressText()"
+      [sub]="'Slot progress of focus plan'"
+      icon="chart"
+      tone="navy"
+    />
+  </div>
+
+  <div class="dash-grid">
+    <section class="card panel schemes-panel">
+      <header class="panel-head">
+        <div>
+          <h2 class="panel-title">Active Schemes</h2>
+          <p class="panel-sub">Paid Count is based on payments — never the calendar.</p>
+        </div>
+        <a class="link-more" routerLink="/schemes">View all</a>
+      </header>
+
+      @if (data().activePlans.length === 0) {
+        <app-empty-state
+          icon="layers"
+          title="No active schemes"
+          message="Start a scheme to track it here with Paid Count progress."
+          actionLabel="Browse Schemes"
+          (action)="goSchemes()"
+        />
+      } @else {
+        <div class="scheme-list">
+          @for (plan of data().activePlans; track plan.id) {
+            <app-plan-card
+              [plan]="plan"
+              [stats]="planService.getStats(plan.id)"
+              (view)="viewPlan(plan.id)"
+              (pay)="payPlan(plan.id)"
+            />
+          }
+        </div>
+      }
+    </section>
+
+    <aside class="side-stack">
+      <section class="card panel next-card">
+        <header class="panel-head">
+          <div>
+            <h2 class="panel-title">Next Payment</h2>
+            <p class="panel-sub">{{ data().focusPlan?.name ?? 'No plan selected' }}</p>
+          </div>
+          <span class="next-slot-badge">{{ data().focusNextSlotLabel }}</span>
+        </header>
+
+        @if (data().focusPlan) {
+          <div class="next-amount">
+            <span class="next-label">Required amount</span>
+            <span class="next-value">{{ data().focusNextRequired | inr }}</span>
+          </div>
+          @if (data().focusPartialBalance > 0) {
+            <div class="partial-line">
+              <span>Partial balance already paid</span>
+              <strong>{{ data().focusPartialBalance | inr }}</strong>
+            </div>
+          }
+          <button type="button" class="btn btn-primary btn-block" (click)="payPlan(data().focusPlan!.id)">
+            <app-icon name="rupee" [size]="17" />
+            Pay {{ data().focusNextRequired | inr }} now
+          </button>
+        } @else {
+          <p class="muted-line">Start a scheme to see your next payment.</p>
+        }
+      </section>
+
+      <section class="card panel streak-card">
+        <div class="streak-row">
+          <span class="streak-flame"><app-icon name="flame" [size]="22" /></span>
+          <div>
+            <span class="streak-big">{{ data().streak.current }}</span>
+            <span class="streak-unit">day current streak</span>
+          </div>
+        </div>
+        <p class="streak-note">
+          Longest streak: <strong>{{ data().streak.longest }}</strong> days · based on payments that
+          completed at least one slot.
+        </p>
+      </section>
+    </aside>
+
+    <section class="card panel progress-panel">
+      <header class="panel-head">
+        <div>
+          <h2 class="panel-title">Savings Progress</h2>
+          <p class="panel-sub">{{ data().focusPlan?.name ?? 'No active plan' }}</p>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="openGrid()">
+          <app-icon name="grid" [size]="15" /> Grid
+        </button>
+      </header>
+
+      @if (data().focusPlan) {
+        <div class="rings">
+          <div class="ring-item">
+            <app-progress-ring
+              [percent]="data().focusSlotProgress"
+              [size]="132"
+              [display]="progressText()"
+              [sub]="'Paid ' + data().focusPaidCount + '/' + data().focusTotalSlots"
+            />
+            <span class="ring-caption">Slot progress</span>
+          </div>
+          <div class="ring-item">
+            <app-progress-ring
+              [percent]="data().focusAmountProgress"
+              [size]="132"
+              color="var(--blue)"
+              track="var(--blue-soft)"
+              [display]="((data().focusAmountProgress) * 100).toFixed(1) + '%'"
+              [sub]="(data().focusTotalPaid | inr) + ' of ' + (data().focusTotalTarget | inr)"
+            />
+            <span class="ring-caption">Amount progress</span>
+          </div>
+        </div>
+        <div class="progress-meta">
+          <div>
+            <span class="meta-label">Total saved</span>
+            <span class="meta-value">{{ data().focusTotalPaid | inr }}</span>
+          </div>
+          <div>
+            <span class="meta-label">Target</span>
+            <span class="meta-value">{{ data().focusTotalTarget | inr }}</span>
+          </div>
+          <div>
+            <span class="meta-label">Remaining</span>
+            <span class="meta-value">{{ (data().focusTotalTarget - data().focusTotalPaid) | inr }}</span>
+          </div>
+        </div>
+      } @else {
+        <app-empty-state
+          icon="chart"
+          title="No progress yet"
+          message="Progress appears as soon as you make your first payment."
+        />
+      }
+    </section>
+
+    <section class="card panel activity-panel">
+      <header class="panel-head">
+        <div>
+          <h2 class="panel-title">Recent Activity</h2>
+          <p class="panel-sub">Latest payments across your plans</p>
+        </div>
+        <a class="link-more" routerLink="/history">History</a>
+      </header>
+
+      @if (data().recentPayments.length === 0) {
+        <app-empty-state
+          icon="clock"
+          title="No payments yet"
+          message="Your payment history will show up here."
+        />
+      } @else {
+        <ul class="activity-list">
+          @for (payment of data().recentPayments; track payment.id) {
+            <li>
+              <span class="act-dot" [class.partial]="payment.status === 'PARTIAL'">
+                <app-icon [name]="payment.status === 'COMPLETED' ? 'check' : 'clock'" [size]="14" />
+              </span>
+              <div class="act-info">
+                <strong>{{ payment.amount | inr }}</strong>
+                <small>{{ payment.planName }} · {{ payment.date | date: 'dd MMM' }}</small>
+              </div>
+              <span class="act-slots">+{{ payment.slotsCompleted }} slots</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="card panel completed-panel">
+      <header class="panel-head">
+        <div>
+          <h2 class="panel-title">Completed Plans</h2>
+          <p class="panel-sub">Fully paid plans 🎉</p>
+        </div>
+        <span class="count-pill">{{ data().completedPlans.length }}</span>
+      </header>
+
+      @if (data().completedPlans.length === 0) {
+        <p class="muted-line">No completed plans yet. Every slot must be fully paid to finish a plan.</p>
+      } @else {
+        <ul class="done-list">
+          @for (plan of data().completedPlans; track plan.id) {
+            <li>
+              <span class="done-icon"><app-icon name="award" [size]="16" /></span>
+              <div>
+                <strong>{{ plan.name }}</strong>
+                <small>{{ plan.totalSlots }}/{{ plan.totalSlots }} · {{ plan.totalTarget | inr }} saved</small>
+              </div>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="viewPlan(plan.id)">View</button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+</section>

@@ -1,0 +1,158 @@
+<section class="page">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Make a Payment</h1>
+      <p class="page-sub">
+        Money flows into the next unpaid slots automatically. Paid Count never depends on today's date.
+      </p>
+    </div>
+  </header>
+
+  @if (planService.plans().length === 0) {
+    <div class="card">
+      <app-empty-state
+        icon="wallet"
+        title="No schemes yet"
+        message="Start a Daily, Weekly or Monthly scheme first — then come back to pay."
+        actionLabel="Browse Schemes"
+        (action)="goSchemes()"
+      />
+    </div>
+  } @else {
+    <div class="pay-plan-chips">
+      @for (plan of planService.plans(); track plan.id) {
+        <button
+          type="button"
+          class="chip plan-chip"
+          [class.chip-active]="selectedPlan()?.id === plan.id"
+          (click)="selectPlan(plan)"
+        >
+          {{ plan.name }}
+          <span class="chip-status" [class]="plan.status === 'PAUSED' ? 'st-paused' : plan.status === 'COMPLETED' ? 'st-done' : 'st-active'">
+            {{ plan.status }}
+          </span>
+        </button>
+      }
+    </div>
+
+    @if (selectedPlan(); as plan) {
+      <div class="pay-grid">
+        <div class="pay-main">
+          <section class="card info-card">
+            <header class="info-head">
+              <div>
+                <p class="info-kicker">Selected plan</p>
+                <h2 class="info-name">{{ plan.name }}</h2>
+              </div>
+              <span class="badge badge-blue">{{ plan.status }}</span>
+            </header>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Paid Count</span>
+                <strong class="info-value">
+                  {{ stats()?.paidCount ?? 0 }} / {{ plan.totalSlots }}
+                </strong>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Next Slot</span>
+                <strong class="info-value">{{ stats()?.nextSlot?.label ?? 'Completed' }}</strong>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Required Amount</span>
+                <strong class="info-value primary">
+                  @if (stats()?.nextSlot; as next) {
+                    {{ (next.requiredAmount - next.paidAmount) | inr }}
+                  } @else {
+                    ₹0
+                  }
+                </strong>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Partial Balance</span>
+                <strong class="info-value" [class.warn]="(stats()?.partialBalance ?? 0) > 0">
+                  {{ stats()?.partialBalance ?? 0 | inr }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="info-foot">
+              <span>Total saved {{ stats()?.totalPaid ?? 0 | inr }}</span>
+              <span>Remaining {{ stats()?.remainingAmount ?? 0 | inr }}</span>
+            </div>
+          </section>
+
+          <section class="card pay-form-card">
+            <div class="next-due">
+              @if (stats()?.nextSlot; as next) {
+                <div class="next-due-info">
+                  <span class="next-due-kicker">Next payment</span>
+                  <strong class="next-due-label">{{ next.label }}</strong>
+                </div>
+                <strong class="next-due-amt">
+                  {{ (next.requiredAmount - next.paidAmount) | inr }} due
+                </strong>
+              } @else {
+                <div class="next-due-info">
+                  <span class="next-due-kicker">All done</span>
+                  <strong class="next-due-label">All slots paid 🎉</strong>
+                </div>
+              }
+            </div>
+
+            <app-payment-form
+              [plan]="plan"
+              [presetAmount]="nextDueAmount()"
+              (amountChange)="amount.set($event)"
+            />
+
+            @if (amount() >= 1) {
+              <p class="entered-line">
+                Paying <strong>{{ amount() | inr }}</strong>
+                @if (nextDueAmount() > 0) {
+                  <span> · {{ nextDueLabel() }} needs {{ nextDueAmount() | inr }}</span>
+                }
+              </p>
+            }
+
+            @if (error(); as errMsg) {
+              <p class="pay-error">
+                <app-icon name="alert" [size]="15" />
+                {{ errMsg }}
+              </p>
+            } @else if (validationMessage(); as message) {
+              <p class="pay-warn">
+                <app-icon name="info" [size]="15" />
+                {{ message }}
+              </p>
+            }
+
+            <button
+              type="button"
+              class="btn btn-primary btn-lg btn-block confirm-btn"
+              [disabled]="!canConfirm()"
+              (click)="confirmPayment()"
+            >
+              <app-icon name="check-circle" [size]="19" />
+              @if (busy()) {
+                Processing…
+              } @else if (amount() >= 1) {
+                CONFIRM PAYMENT · {{ amount() | inr }}
+              } @else {
+                CONFIRM PAYMENT
+              }
+            </button>
+
+            <p class="pay-note">
+              Minimum ₹1 per payment — enter any amount, then Confirm.
+            </p>
+          </section>
+        </div>
+
+        <aside class="pay-side">
+          <app-payment-preview [preview]="preview()" />
+        </aside>
+      </div>
+    }
+  }
+</section>
