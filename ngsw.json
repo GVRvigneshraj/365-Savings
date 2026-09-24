@@ -1,0 +1,140 @@
+{
+  "configVersion": 1,
+  "timestamp": 1790256749016,
+  "index": "/365-Savings/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/365-Savings/chunk-B0q1p3H4.js",
+        "/365-Savings/chunk-B5Zv0Bm0.js",
+        "/365-Savings/chunk-BOx1oJKC.js",
+        "/365-Savings/chunk-BTZy9Tq5.js",
+        "/365-Savings/chunk-BX7aujjN.js",
+        "/365-Savings/chunk-Bb5AHCBa.js",
+        "/365-Savings/chunk-BfboPpnU.js",
+        "/365-Savings/chunk-BzlGs-nF.js",
+        "/365-Savings/chunk-C90XGLqw.js",
+        "/365-Savings/chunk-CF-fO5SF.js",
+        "/365-Savings/chunk-CFxF2AI2.js",
+        "/365-Savings/chunk-Cc18xBpx.js",
+        "/365-Savings/chunk-CooZBEkP.js",
+        "/365-Savings/chunk-DFFVCSVm.js",
+        "/365-Savings/chunk-DJFKwWJr.js",
+        "/365-Savings/chunk-DbpZO1oW.js",
+        "/365-Savings/chunk-DhSnRgic.js",
+        "/365-Savings/chunk-Doz2IE6R.js",
+        "/365-Savings/chunk-DrrzITzX.js",
+        "/365-Savings/chunk-DuWJmiuI.js",
+        "/365-Savings/chunk-DwizSAQw.js",
+        "/365-Savings/chunk-ddgcX2Mh.js",
+        "/365-Savings/chunk-jTzmImj5.js",
+        "/365-Savings/chunk-lNO3_ira.js",
+        "/365-Savings/chunk-nNff2xoU.js",
+        "/365-Savings/chunk-t3stncOp.js",
+        "/365-Savings/favicon.ico",
+        "/365-Savings/icons/icon-192x192.png",
+        "/365-Savings/icons/icon-512x512-maskable.png",
+        "/365-Savings/icons/icon-512x512.png",
+        "/365-Savings/index.html",
+        "/365-Savings/main-6RV6SY3D.js",
+        "/365-Savings/manifest.webmanifest",
+        "/365-Savings/styles-MQAXLBGG.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/365-Savings/icons/icon-128x128.png",
+        "/365-Savings/icons/icon-144x144.png",
+        "/365-Savings/icons/icon-152x152.png",
+        "/365-Savings/icons/icon-384x384.png"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "google-fonts",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [],
+      "patterns": [
+        "https:\\/\\/fonts\\.googleapis\\.com\\/.*",
+        "https:\\/\\/fonts\\.gstatic\\.com\\/.*"
+      ]
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/365-Savings/chunk-B0q1p3H4.js": "709ca3c186c642d32818f7ea59a2483bfa2456dc",
+    "/365-Savings/chunk-B5Zv0Bm0.js": "a99796cbdb687f74c2262f148258ab58a44e5d7c",
+    "/365-Savings/chunk-BOx1oJKC.js": "8b71ad687b03560b43be26bc73ba9bff496d196d",
+    "/365-Savings/chunk-BTZy9Tq5.js": "c8915cd7fb17ff6a0eae1d74658d0241bacc2156",
+    "/365-Savings/chunk-BX7aujjN.js": "f2c26884823e834b7aab7ee642d663d1abf9296c",
+    "/365-Savings/chunk-Bb5AHCBa.js": "f0d15b6cee8011267cf48c5ac3fd07e48aaac9d4",
+    "/365-Savings/chunk-BfboPpnU.js": "cdaca08f2bd43531d7d01cf587bf7b801ee35219",
+    "/365-Savings/chunk-BzlGs-nF.js": "a840b2088b9f510e6c4418ba6e3501419dd17843",
+    "/365-Savings/chunk-C90XGLqw.js": "fa50764fc9b63606eb387cdb59fc4be8d91d1001",
+    "/365-Savings/chunk-CF-fO5SF.js": "15477d47725a3b8e7c989b865ec9749b52c34dce",
+    "/365-Savings/chunk-CFxF2AI2.js": "e7694bb8df65dc60e316d4b91f15ba0af4b04949",
+    "/365-Savings/chunk-Cc18xBpx.js": "93810743fec8bd998b07840248517241ce9f0296",
+    "/365-Savings/chunk-CooZBEkP.js": "101f3c70cdcdb07de19c6b5c860201992477df91",
+    "/365-Savings/chunk-DFFVCSVm.js": "b9e3718a42cbd145707302f1d6c22f5089e96046",
+    "/365-Savings/chunk-DJFKwWJr.js": "15d3b67372ee8af5bf15145119778d73581b51e8",
+    "/365-Savings/chunk-DbpZO1oW.js": "82bd8f0c68b18d62379fceb0204f301ae2e59a8d",
+    "/365-Savings/chunk-DhSnRgic.js": "320449e7f91d26ffc5dcaf4c7e8c9034bc25167d",
+    "/365-Savings/chunk-Doz2IE6R.js": "6040fc95f3c69c62ff82875f8f5b2cdad537a7dc",
+    "/365-Savings/chunk-DrrzITzX.js": "d89cac8bd9648b5c2f1a4be917bcb2cbbc255c8c",
+    "/365-Savings/chunk-DuWJmiuI.js": "e1188eac859940db308f1b6f14bdcff679f525e0",
+    "/365-Savings/chunk-DwizSAQw.js": "ed483df24c5bf7b2dd8d57b0b46bb3bd5f46322d",
+    "/365-Savings/chunk-ddgcX2Mh.js": "4c9e4f63bb1813366a7d4dfec7d522822653d53a",
+    "/365-Savings/chunk-jTzmImj5.js": "fe9e67f4a05b9f1146bfe5abcdb55f0e5314e21d",
+    "/365-Savings/chunk-lNO3_ira.js": "df54919b09a69b2e35af0f36ec3067e358bb61da",
+    "/365-Savings/chunk-nNff2xoU.js": "6f6da6d7260d013c0ce2f243a3d138dcbfcf4973",
+    "/365-Savings/chunk-t3stncOp.js": "a2b49d3479e7c2e799afb7e0820e59bc6902975e",
+    "/365-Savings/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "/365-Savings/icons/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
+    "/365-Savings/icons/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
+    "/365-Savings/icons/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
+    "/365-Savings/icons/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
+    "/365-Savings/icons/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
+    "/365-Savings/icons/icon-512x512-maskable.png": "ea662a2ce8538cc0d426073d51e54e5a87dc0287",
+    "/365-Savings/icons/icon-512x512.png": "715e064c647d3afa628e2021120d7f7691576cb9",
+    "/365-Savings/index.html": "a86666c5849dc25e763445b6ee8de1621ef70dc4",
+    "/365-Savings/main-6RV6SY3D.js": "e759e5e15f7c72c5929c4fbb90fddec923ff0013",
+    "/365-Savings/manifest.webmanifest": "92e69bbd436b2c3d8ad44bad381466d20f064b73",
+    "/365-Savings/styles-MQAXLBGG.css": "9551beb4b14c32da86d127a7c5e195044e74f5c1"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
